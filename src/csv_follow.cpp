@@ -1,13 +1,19 @@
-// main.cpp - demo Fl_Csv_View
-#include "Fl_Csv_View.H"
+
 #include <FL/Fl.H>
+#include <FL/Fl_SVG_Image.H>
 #include <FL/Fl_Window.H>
+
+#include "Fl_Csv_View.H"
+#include "csv_follow_icon.h"
 
 int main(int argc, char **argv)
 {
   Fl_Window win(820, 420, "Demo Fl_Csv_View");
 
   Fl_Csv_View *csv = new Fl_Csv_View(10, 10, 800, 400);
+  Fl_SVG_Image *app_icon = new Fl_SVG_Image(nullptr, csv_follow_svg_data);
+  win.icon(app_icon);
+
   csv->separator(';');
   csv->has_header(true);
   csv->value("nom;age;ville;profession\n"
