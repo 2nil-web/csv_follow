@@ -1,0 +1,6 @@
+
+#include "windows.h"
+LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
+CREATEPROCESS_MANIFEST_RESOURCE_ID RT_MANIFEST    "csv_follow.manifest"
+102            ICON    DISCARDABLE     "csv_follow.ico"
+
