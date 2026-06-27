@@ -163,7 +163,7 @@ endif
 # 	cd ${SRC_DIR} && ${FLUID} -c -o .cpp ${PREFIX}_ui.fl
 
 
-${SRC_DIR}/${PREFIX}.cpp ${SRC_DIR}/file_features.cpp ${SRC_DIR}/edit_features.cpp ${SRC_DIR}/pref.cpp : ${SRC_DIR}/${PREFIX}_icon.h ${SRC_DIR}/${PREFIX}.ico
+${SRC_DIR}/${PREFIX}.cpp : ${SRC_DIR}/${PREFIX}_icon.h ${SRC_DIR}/${PREFIX}.ico
 
 ${SRC_DIR}/${PREFIX}.ico : ${SRC_DIR}/${PREFIX}.svg
 	${MAGICK} -density 256x256 -background none $< -define icon:auto-resize=128,96,64,48,32,16 -colors 256 $@
