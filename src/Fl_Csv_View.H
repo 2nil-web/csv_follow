@@ -21,6 +21,96 @@
 
 class Fl_Csv_View : public Fl_Table_Row
 {
+public:
+  Fl_Csv_View(int X, int Y, int W, int H, const char *L = nullptr) : Fl_Table_Row(X, Y, W, H, L), sep_(','), quote_('"'), has_header_(true)
+  {
+    col_header(1);
+    col_header_height(24);
+    row_header(0);
+    row_height_all(22);
+    type(Fl_Table_Row::SELECT_SINGLE);
+    end();
+  }
+
+  // Caractere separateur de champs (',' ';' '\t' ...)
+  void separator(char c)
+  {
+    sep_ = c;
+  }
+  char separator() const
+  {
+    return sep_;
+  }
+
+  // Si true, la premiere ligne du CSV est utilisee comme en-tete de colonnes
+  void has_header(bool b)
+  {
+    has_header_ = b;
+  }
+  bool has_header() const
+  {
+    return has_header_;
+  }
+
+  // Charge et parse une chaine CSV complete
+  void value(const std::string &csv_text)
+  {
+    rows_.clear();
+    headers_.clear();
+
+    std::vector<std::vector<std::string>> all_rows = parse_csv(csv_text);
+
+    if (!all_rows.empty() && has_header_)
+    {
+      headers_ = all_rows.front();
+      all_rows.erase(all_rows.begin());
+    }
+    rows_ = all_rows;
+
+    size_t ncols = headers_.size();
+    for (auto &r : rows_)
+      if (r.size() > ncols)
+        ncols = r.size();
+    ncols_ = (int)ncols;
+
+    rows(rows_.empty() ? 1 : (int)rows_.size());
+    cols(ncols_ > 0 ? ncols_ : 1);
+
+    col_header(has_header_ ? 1 : 0);
+
+    recompute_col_widths();
+    redraw();
+  }
+
+  // Recupere le contenu d'une cellule (lecture seule)
+  std::string cell(int r, int c) const
+  {
+    if (r < 0 || r >= (int)rows_.size())
+      return "";
+    if (c < 0 || c >= (int)rows_[r].size())
+      return "";
+    return rows_[r][c];
+  }
+
+  // Calcule la taille "naturelle" du widget pour afficher tout le contenu
+  // sans scrollbars (somme des largeurs de colonnes, somme des hauteurs de
+  // lignes + en-tete). Une marge est ajoutee pour la bordure du tableau.
+  void preferred_size(int &w, int &h)
+  {
+    int total_w = 0;
+    for (int c = 0; c < ncols_; ++c)
+      total_w += col_widths_.size() > (size_t)c ? col_widths_[c] : 80;
+
+    int nrows = rows_.empty() ? 1 : (int)rows_.size();
+    int total_h = nrows * row_height(0);
+    if (has_header_)
+      total_h += col_header_height();
+
+    // +2 pour la bordure du widget (Fl_Table dessine un cadre)
+    w = total_w + 2;
+    h = total_h + 2;
+  }
+
 protected:
   void draw_cell(TableContext context, int R = 0, int C = 0, int X = 0, int Y = 0, int W = 0, int H = 0) override
   {
@@ -63,12 +153,13 @@ protected:
   }
 
 private:
-  char sep_ = ',';
-  char quote_ = '"';
-  bool has_header_ = true;
+  char sep_;
+  char quote_;
+  bool has_header_;
   int ncols_ = 0;
   std::vector<std::string> headers_;
   std::vector<std::vector<std::string>> rows_;
+  std::vector<int> col_widths_;
 
   // Parseur CSV minimal gerant les guillemets et le caractere d'echappement ""
   std::vector<std::vector<std::string>> parse_csv(const std::string &text) const
@@ -152,6 +243,7 @@ private:
 
   void recompute_col_widths()
   {
+    col_widths_.assign(ncols_, 80);
     for (int c = 0; c < ncols_; ++c)
     {
       int w = 80;
@@ -161,77 +253,9 @@ private:
         if (c < (int)r.size())
           w = std::max(w, (int)r[c].size() * 8 + 16);
       w = std::min(w, 400);
+      col_widths_[c] = w;
       col_width(c, w);
     }
-  }
-
-public:
-  Fl_Csv_View(int X, int Y, int W, int H, const char *L = nullptr) : Fl_Table_Row(X, Y, W, H, L)
-  {
-    col_header(1);
-    col_header_height(24);
-    row_header(0);
-    row_height_all(22);
-    type(Fl_Table_Row::SELECT_SINGLE);
-    end();
-  }
-
-  // Caractere separateur de champs (',' ';' '\t' ...)
-  void separator(char c)
-  {
-    sep_ = c;
-  }
-  char separator() const
-  {
-    return sep_;
-  }
-
-  // Si true, la premiere ligne du CSV est utilisee comme en-tete de colonnes
-  void has_header(bool b)
-  {
-    has_header_ = b;
-  }
-  bool has_header() const
-  {
-    return has_header_;
-  }
-
-  // Charge et parse une chaine CSV complete
-  void value(const std::string &csv_text)
-  {
-    rows_.clear();
-    headers_.clear();
-
-    std::vector<std::vector<std::string>> all_rows = parse_csv(csv_text);
-
-    if (!all_rows.empty() && has_header_)
-    {
-      headers_ = all_rows.front();
-      all_rows.erase(all_rows.begin());
-    }
-    rows_ = all_rows;
-
-    size_t ncols = headers_.size();
-    for (auto &r : rows_)
-      if (r.size() > ncols)
-        ncols = r.size();
-    ncols_ = (int)ncols;
-
-    rows(rows_.empty() ? 1 : (int)rows_.size());
-    cols(ncols_ > 0 ? ncols_ : 1);
-
-    recompute_col_widths();
-    redraw();
-  }
-
-  // Recupere le contenu d'une cellule (lecture seule)
-  std::string cell(int r, int c) const
-  {
-    if (r < 0 || r >= (int)rows_.size())
-      return "";
-    if (c < 0 || c >= (int)rows_[r].size())
-      return "";
-    return rows_[r][c];
   }
 };
 
