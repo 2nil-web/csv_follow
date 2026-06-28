@@ -131,9 +131,9 @@ int main(int argc, char **argv)
   if (args.size() > 0 && args[0] == "-c")
   {
     args.erase(args.begin());
-    std::intmax_t fsize, nl;
-    count_line(path, fsize, nl);
-    std::cout << path << " - file size: " << fsize << ", line count: " << nl << std::endl;
+    std::intmax_t fsize, nw, nl;
+    count_line(path, fsize, nw, nl);
+    std::cout << path << " - file size: " << fsize << ", word count: " << nw  << ", line count: " << nl << std::endl;
     return 0;
   }
 

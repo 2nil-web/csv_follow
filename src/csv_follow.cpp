@@ -1,5 +1,10 @@
 
 #include <algorithm>
+#include <filesystem>
+#include <fstream>
+#include <iostream>
+#include <string>
+#include <vector>
 
 #include <FL/Fl.H>
 #include <FL/Fl_SVG_Image.H>
@@ -8,19 +13,80 @@
 #include "Fl_Csv_View.H"
 #include "csv_follow_icon.h"
 
+#ifdef __OSX__
+const char delimiter = '\r';
+#else
+const char delimiter = '\n';
+#endif
+
+void tail_stream(std::istream &is, const std::intmax_t nl2read, std::intmax_t& nlread, std::string &buf)
+{
+  is.seekg(-1, std::ios::end);
+  char ch;
+  nlread = 0;
+  buf = "";
+
+  for (std::intmax_t i = 0; i < is.tellg(); i++)
+  {
+    ch = is.get();
+
+    if (ch == delimiter)
+    {
+      if (nlread < nl2read)
+        nlread++;
+      else
+        break;
+    }
+
+    buf.insert(0, 1, ch);
+    is.seekg(-2, std::ios::cur);
+  }
+}
+
+bool tail(std::filesystem::path filepath, const std::intmax_t nl2read, std::intmax_t& nlread, std::string &buf)
+{
+  if (filepath.string() == "-")
+  {
+    tail_stream(std::cin, nl2read, nlread, buf);
+  }
+  else
+  {
+    std::ifstream ifs(filepath, std::ifstream::ate | std::ifstream::binary);
+
+    if (ifs)
+    {
+      tail_stream(ifs, nl2read, nlread, buf);
+      ifs.close();
+    }
+    else
+      return false;
+  }
+
+  return true;
+}
+
 int main(int argc, char **argv)
 {
-  const int margin = 10;
+  const int margin = 6;
+  std::vector<std::string> args(argv + 1, argv + argc);
 
+  if (args.size() < 1) return 1;
+  argc=0;
+
+  std::intmax_t nl2read = 100, nlread;
+  std::string buf;
+  tail(args[0], nl2read, nlread, buf);
   // Cree le widget hors fenetre pour connaitre sa taille naturelle
   Fl_Csv_View *csv = new Fl_Csv_View(margin, margin, 800, 400);
   csv->separator(';');
   csv->has_header(false);
-  csv->value(//"nom;age;ville;profession\n"
+
+  csv->value(buf.c_str());
+  /*"nom;age;ville;profession\n"
              "Alice;30;Paris;Ingenieure\n"
              "Bob;25;Lyon;Designer\n"
              "Claire;42;Marseille;Medecin\n"
-             "David;36;Toulouse;\"Chef, cuisinier\"\n");
+             "David;36;Toulouse;\"Chef, cuisinier\"\n");*/
 
   // Taille souhaitee = taille naturelle du contenu + marges
   int content_w, content_h;
