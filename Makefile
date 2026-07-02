@@ -107,6 +107,9 @@ font_list${EXEXT} : assets/font_list.cpp
 mytail${EXEXT} : assets/mytail.cpp
 	c++ $< -o $@
 
+mywhich${EXEXT} : src/mywhich.cpp
+	c++ $< -o $@
+
 sunset_calculator${EXEXT} : assets/sunset_calculator.cpp
 	${GXX_COMPILE} assets/sunset_calculator.cpp ${GXX_LINK_OPT} -o sunset_calculator${EXEXT}
 
