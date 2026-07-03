@@ -151,8 +151,12 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src/csv_follow.cpp" />
+    <ClCompile Include="src/utils.cpp" />
+    <ClCompile Include="src/log.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src/utils.h" />
+    <ClCompile Include="src/log.h" />
     <ClCompile Include="src/Fl_Csv_View.H" />
   </ItemGroup>
   <ItemGroup>

@@ -33,8 +33,8 @@ ISO8601 := $(shell date +%Y-%m-%dT%H:%M:%SZ)
 PLATFORM="${SYS_VER} $(shell uname -m)"
 
 PREFIX=csv_follow
-SRCS=${PREFIX}.cpp
-SRCS:=$(addprefix  ${SRC_DIR}/,${SRCS})
+SRCS=${PREFIX}.cpp utils.cpp log.cpp
+SRCS:=$(addprefix ${SRC_DIR}/,${SRCS})
 
 ifeq ($(findstring NT-, $(UNAME)),)
 #FLTK_DIR=/opt/fltk/1.5
@@ -105,9 +105,6 @@ font_list${EXEXT} : assets/font_list.cpp
 	${GXX_COMPILE} assets/font_list.cpp ${GXX_LINK_OPT} -o font_list${EXEXT}
 
 mytail${EXEXT} : assets/mytail.cpp
-	c++ $< -o $@
-
-mywhich${EXEXT} : src/mywhich.cpp
 	c++ $< -o $@
 
 sunset_calculator${EXEXT} : assets/sunset_calculator.cpp

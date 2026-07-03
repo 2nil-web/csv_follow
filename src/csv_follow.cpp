@@ -10,6 +10,12 @@
 #include <FL/Fl_SVG_Image.H>
 #include <FL/Fl_Window.H>
 
+#ifndef NOMINMAX
+#define NOMINMAX
+#endif
+
+#include "utils.h"
+#include "log.h"
 #include "Fl_Csv_View.H"
 #include "csv_follow_icon.h"
 
