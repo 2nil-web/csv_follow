@@ -14,10 +14,10 @@
 #define NOMINMAX
 #endif
 
-#include "utils.h"
-#include "log.h"
 #include "Fl_Csv_View.H"
 #include "csv_follow_icon.h"
+#include "log.h"
+#include "utils.h"
 
 #ifdef __OSX__
 const char delimiter = '\r';
@@ -25,7 +25,7 @@ const char delimiter = '\r';
 const char delimiter = '\n';
 #endif
 
-void tail_stream(std::istream &is, const std::intmax_t nl2read, std::intmax_t& nlread, std::string &buf)
+void tail_stream(std::istream &is, const std::intmax_t nl2read, std::intmax_t &nlread, std::string &buf)
 {
   is.seekg(-1, std::ios::end);
   char ch;
@@ -49,7 +49,7 @@ void tail_stream(std::istream &is, const std::intmax_t nl2read, std::intmax_t& n
   }
 }
 
-bool tail(std::filesystem::path filepath, const std::intmax_t nl2read, std::intmax_t& nlread, std::string &buf)
+bool tail(std::filesystem::path filepath, const std::intmax_t nl2read, std::intmax_t &nlread, std::string &buf)
 {
   if (filepath.string() == "-")
   {
@@ -76,8 +76,9 @@ int main(int argc, char **argv)
   const int margin = 6;
   std::vector<std::string> args(argv + 1, argv + argc);
 
-  if (args.size() < 1) return 1;
-  argc=0;
+  if (args.size() < 1)
+    return 1;
+  argc = 0;
 
   std::intmax_t nl2read = 100, nlread;
   std::string buf;

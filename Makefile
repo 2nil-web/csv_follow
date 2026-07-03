@@ -33,7 +33,7 @@ ISO8601 := $(shell date +%Y-%m-%dT%H:%M:%SZ)
 PLATFORM="${SYS_VER} $(shell uname -m)"
 
 PREFIX=csv_follow
-SRCS=${PREFIX}.cpp utils.cpp log.cpp
+SRCS=${PREFIX}.cpp utils.cpp log.cpp options.cpp
 SRCS:=$(addprefix ${SRC_DIR}/,${SRCS})
 
 ifeq ($(findstring NT-, $(UNAME)),)

@@ -52,7 +52,7 @@
 #pragma warning(pop)
 #endif
 
-//#include "log.h"
+// #include "log.h"
 #include "utils.h"
 
 #ifdef _WIN32

@@ -133,7 +133,7 @@ int main(int argc, char **argv)
     args.erase(args.begin());
     std::intmax_t fsize, nw, nl;
     count_line(path, fsize, nw, nl);
-    std::cout << path << " - file size: " << fsize << ", word count: " << nw  << ", line count: " << nl << std::endl;
+    std::cout << path << " - file size: " << fsize << ", word count: " << nw << ", line count: " << nl << std::endl;
     return 0;
   }
 
